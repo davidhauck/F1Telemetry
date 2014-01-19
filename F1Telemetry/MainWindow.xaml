@@ -1,0 +1,12 @@
+﻿<Window x:Class="F1Telemetry.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="700" Width="700">
+    <Grid>
+        <TextBlock HorizontalAlignment="Left" Height="60" TextWrapping="Wrap" Text="{Binding Output}" VerticalAlignment="Top" Width="282"/>
+        <Image Source="{Binding ThrottleImage, Mode=TwoWay}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="100"/>
+        <Image Source="{Binding BrakeImage, Mode=TwoWay}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="100" Margin="0,0,20,0"/>
+        <Image Source="{Binding TurnImage, Mode=TwoWay}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="100" Height="20" Margin="0,40,45,0"/>
+        <Image Source="{Binding Rpms, Mode=TwoWay}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="400" Height="150" Margin="0,211,120,0"/>
+    </Grid>
+</Window>
