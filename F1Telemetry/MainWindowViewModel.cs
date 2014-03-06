@@ -13,6 +13,11 @@ using System.Windows.Interop;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Controls;
+using System.Windows.Input;
+using Microsoft.Win32;
+using F1Telemetry.Core;
+using F1Telemetry.Track;
+using F1Telemetry.Forces;
 
 namespace F1Telemetry
 {
@@ -39,6 +44,23 @@ namespace F1Telemetry
             }
         }
 
+        private ICommand _previousRaceClick;
+        public ICommand PreviousRaceClick
+        {
+            get
+            {
+                if (_previousRaceClick == null)
+                {
+                    _previousRaceClick = new RelayCommand(p => this.OpenOldRace());
+                }
+                return _previousRaceClick;
+            }
+        }
+
+        private TrackView TrackView { get; set; }
+
+        private ForcesView ForcesView { get; set; }
+
         public MainWindowViewModel()
         {
             _socket = new UdpClient();
@@ -46,6 +68,12 @@ namespace F1Telemetry
             _socket.ExclusiveAddressUse = false;
             _socket.Client.Bind(new IPEndPoint(IPAddress.Any, PORTNUM));
             Output = "Bound to socket on " + IP + ":" + PORTNUM.ToString();
+
+            storedRpms = new List<List<System.Windows.Point>>();
+            for (int i = 0; i < NUM_GEARS; i++)
+            {
+                storedRpms.Add(new List<Point>());
+            }
 
             string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\F1Telemetry\\";
             string fileName = DateTime.Now.ToString("MM-dd-yyyy_HH-mm") + ".csv";
@@ -68,6 +96,172 @@ namespace F1Telemetry
                 f.Write("\r\n");
             }
             BeginListen();
+        }
+
+        RaceModel _rm;
+
+        private void OpenOldRace()
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.FileName = "sample";
+            ofd.DefaultExt = ".csv";
+            ofd.Filter = "Comma Separated Values (.csv)|*.csv";
+            Nullable<bool> result = ofd.ShowDialog();
+            if (result == true)
+            {
+                string filename = ofd.FileName;
+                //RacingVisibility = Visibility.Collapsed;
+                //AnalyzingVisibility = Visibility.Visible;
+                _rm = ReadFile(filename);
+                //CollectionLaps.Clear();
+                //CollectionLaps.Add("All Laps");
+                //for (int i = 1; i < rm.CompletedLaps[rm.CompletedLaps.Count - 1] + 1; i++)
+                //{
+                //    CollectionLaps.Add(i.ToString());
+                //}
+                int numberOfSections;
+
+                List<List<float>> accelerations = new List<List<float>>() { _rm.LateralAcceleration, null, _rm.LongitudinalAcceleration };
+                List<List<float>> coordinates = new List<List<float>>() { _rm.X, null, _rm.Z };
+                List<int> completedLaps = new List<int>(_rm.CompletedLapsInRace.Count);
+                for (int i = 0; i < _rm.CompletedLapsInRace.Count; i++)
+                {
+                    completedLaps.Add((int)_rm.CompletedLapsInRace[i]);
+                }
+
+                if (completedLaps[0] > completedLaps[completedLaps.Count - 1] - 2)
+                {
+                    throw new Exception("not enough laps to accurately gather data");
+                }
+
+                _rm.TurnSections = Utils.FindTurnsBasedOnLap(completedLaps, accelerations, coordinates, completedLaps[0] + 1, out numberOfSections);
+                //CollectionSections.Clear();
+                //CollectionSections.Add("All Sections");
+                //for (int i = 1; i <= numberOfSections; i++)
+                //{
+                //    CollectionSections.Add(i.ToString());
+                //}
+                UpdateScreen();
+            }
+        }
+
+        private void UpdateScreen()
+        {
+            if (_rm != null)
+            {
+                DrawForces();
+                //DrawRpms();
+                DrawTrack();
+            }
+        }
+
+        private void DrawForces()
+        {
+            List<float> xAcc = null;
+            List<float> yAcc = null;
+            int selectedlap;
+            int selectedsection;
+
+            //if (SelectedLap == "All Laps")
+                selectedlap = -1;
+            //else
+            //    selectedlap = int.Parse(SelectedLap);
+
+            //if (SelectedSection == "All Sections")
+                selectedsection = -1;
+            //else
+            //    selectedsection = int.Parse(SelectedSection);
+
+            xAcc = new List<float>();
+            yAcc = new List<float>();
+
+            for (int i = 0; i < _rm.LateralAcceleration.Count; i++)
+            {
+                if ((_rm.CompletedLapsInRace[i] == selectedlap - 1 || selectedlap == -1) && (_rm.TurnSections[i] == selectedsection - 1 || selectedsection == -1))
+                {
+                    xAcc.Add(_rm.LateralAcceleration[i]);
+                    yAcc.Add(_rm.LongitudinalAcceleration[i]);
+                }
+            }
+            if (ForcesView == null)
+            {
+                ForcesView = new ForcesView();
+            }
+            ForcesView.Forces.DrawAccelerationMap(xAcc, yAcc);
+            ForcesView.Topmost = true;
+            ForcesView.Show();
+        }
+
+        private void DrawTrack()
+        {
+            List<float> xCoor = null;
+            List<float> yCoor = null;
+            List<int> turnSections = null;
+            int selectedlap;
+            int selectedsection;
+
+            //if (SelectedLap == "All Laps")
+                selectedlap = -1;
+            //else
+            //    selectedlap = int.Parse(SelectedLap);
+
+            //if (SelectedSection == "All Sections")
+                selectedsection = -1;
+            //else
+            //    selectedsection = int.Parse(SelectedSection);
+
+            xCoor = new List<float>();
+            yCoor = new List<float>();
+            turnSections = new List<int>();
+
+            for (int i = 0; i < _rm.LateralAcceleration.Count; i++)
+            {
+                if ((_rm.CompletedLapsInRace[i] == selectedlap - 1 || selectedlap == -1) && (_rm.TurnSections[i] == selectedsection - 1 || selectedsection == -1))
+                {
+                    xCoor.Add(_rm.X[i]);
+                    yCoor.Add(_rm.Z[i]);
+                    turnSections.Add(_rm.TurnSections[i]);
+                }
+            }
+            if (TrackView == null)
+            {
+                TrackView = new TrackView();
+            }
+            TrackView.Track.DrawTrack(xCoor, yCoor, turnSections);
+            TrackView.Topmost = true;
+            TrackView.Show();
+        }
+
+        private RaceModel ReadFile(string filename)
+        {
+            RaceModel model = new RaceModel();
+
+            var fields = typeof(RaceModel).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            System.IO.StreamReader filestream = new System.IO.StreamReader(filename);
+            string line = filestream.ReadLine();
+            //string[] instancenames = line.Split(',');
+            while ((line = filestream.ReadLine()) != null)
+            {
+                string[] values = line.Split(',');
+                for (int i = 0; i < values.Count(); i++)
+                {
+                    var oldvalue = fields[i].GetValue(model);
+                    if (oldvalue.GetType() == typeof(List<float>))
+                    {
+                        var array = oldvalue as List<float>;
+                        array.Add(float.Parse(values[i]));
+                        fields[i].SetValue(model, array);
+                    }
+                    else if (oldvalue.GetType() == typeof(List<string>))
+                    {
+                        var array = oldvalue as List<string>;
+                        array.Add(values[i]);
+                        fields[i].SetValue(model, array);
+                    }
+                }
+            }
+            return model;
         }
 
         void BeginListen()
@@ -155,23 +349,96 @@ namespace F1Telemetry
 
         int RpmHeight = 150;
         int RpmWidth = 400;
-
-
+        
+        List<List<System.Windows.Point>> storedRpms;
+        List<LineGeometry> _lines;
+        int NUM_GEARS = 7;
         int _counter = 0;
         private void DrawRpms(TelemetryPacket packet)
         {
-            if (_counter++ % 20 == 0)
-            {
-                double y = RpmHeight - packet.EngineRevs / 2000 * RpmHeight;
-                double x = packet.SpeedInKmPerHour / 350 * RpmWidth;
+            if (packet.Gear <= 0 || packet.Gear == 10 || packet.SpeedInKmPerHour < 50)
+                return;
+            double y = RpmHeight - packet.EngineRevs / 2000 * RpmHeight;
+            double x = packet.SpeedInKmPerHour / 350 * RpmWidth;
+            storedRpms[(int)packet.Gear - 1].Add(new Point(x, y));
 
-                if (Rpms == null)
+            if (_counter % 20 == 0 || _lines != null)
+            {
+                if (_lines == null)
+                {
+                    if (Rpms == null)
+                    {
+                        GeometryGroup background = new GeometryGroup();
+                        background.Children.Add(new RectangleGeometry(new Rect(0, 0, RpmWidth, RpmHeight)));
+
+                        GeometryGroup foreground = new GeometryGroup();
+                        foreground.Children.Add(new System.Windows.Media.EllipseGeometry(new Point(x, y), 1, 1));
+
+                        GeometryDrawing aGeometryDrawing = new GeometryDrawing();
+                        aGeometryDrawing.Geometry = background;
+
+                        GeometryDrawing otherGeometryDrawing = new GeometryDrawing();
+                        otherGeometryDrawing.Geometry = foreground;
+
+                        aGeometryDrawing.Brush = Brushes.Transparent;
+                        aGeometryDrawing.Pen = new Pen(Brushes.Black, 1);
+
+                        otherGeometryDrawing.Brush = Brushes.Black;
+                        otherGeometryDrawing.Pen = new Pen(Brushes.Black, 1);
+
+                        DrawingGroup dg = new DrawingGroup();
+                        dg.Children.Add(aGeometryDrawing);
+                        dg.Children.Add(otherGeometryDrawing);
+
+                        DrawingImage geometryImage = new DrawingImage(dg);
+
+                        Rpms = geometryImage;
+                    }
+                    else
+                    {
+                        (((((Rpms as DrawingImage).Drawing as DrawingGroup).Children[0] as GeometryDrawing).Geometry) as GeometryGroup).Children.Add(new System.Windows.Media.EllipseGeometry(new Point(x, y), 1, 1));
+                    }
+
+                    if (storedRpms[0].Count > 1000 &&
+                        storedRpms[1].Count > 1000 &&
+                        storedRpms[2].Count > 1000 &&
+                        storedRpms[3].Count > 1000 &&
+                        storedRpms[4].Count > 1000 &&
+                        storedRpms[5].Count > 1000 &&
+                        storedRpms[6].Count > 1000)
+                    {
+
+                        float previousX = 50;
+                        _lines = new List<LineGeometry>();
+                        foreach (var points in storedRpms)
+                        {
+                            float meanX = points.Average(point => (float)point.X);
+                            float meanY = points.Average(point => (float)point.Y);
+
+                            float sumXSquared = points.Sum(point => (float)(point.X * point.X));
+                            float sumXY = points.Sum(point => (float)(point.X * point.Y));
+
+                            float a = (sumXY / points.Count - meanX * meanY) / (sumXSquared / points.Count - meanX * meanX);
+                            float b = (a * meanX - meanY);
+                            
+                            float nextX = (10 + b) / a;
+                            LineGeometry geometry = new LineGeometry(new Point(previousX, a * previousX - b), new Point(nextX, a * nextX - b));
+                            previousX = nextX;
+                            _lines.Add(geometry);
+                        }
+                    }
+                }
+                else
                 {
                     GeometryGroup background = new GeometryGroup();
                     background.Children.Add(new RectangleGeometry(new Rect(0, 0, RpmWidth, RpmHeight)));
 
                     GeometryGroup foreground = new GeometryGroup();
-                    foreground.Children.Add(new System.Windows.Media.EllipseGeometry(new Point(x, y), 1, 1));
+                    foreground.Children.Add(new System.Windows.Media.EllipseGeometry(new Point(x, y), 5, 5));
+                    foreach (var line in _lines)
+                    {
+                        foreground.Children.Add(line);
+                    }
 
                     GeometryDrawing aGeometryDrawing = new GeometryDrawing();
                     aGeometryDrawing.Geometry = background;
@@ -190,15 +457,12 @@ namespace F1Telemetry
                     dg.Children.Add(otherGeometryDrawing);
 
                     DrawingImage geometryImage = new DrawingImage(dg);
-                    //geometryImage.Freeze();
+                    geometryImage.Freeze();
 
                     Rpms = geometryImage;
                 }
-                else
-                {
-                    (((((Rpms as DrawingImage).Drawing as DrawingGroup).Children[0] as GeometryDrawing).Geometry) as GeometryGroup).Children.Add(new System.Windows.Media.EllipseGeometry(new Point(x, y), 1, 1));
-                }
             }
+            _counter++;
         }
 
         private void DrawThrottle(TelemetryPacket packet, int height)

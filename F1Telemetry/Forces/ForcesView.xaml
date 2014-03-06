@@ -1,0 +1,8 @@
+﻿<Window x:Class="F1Telemetry.Forces.ForcesView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ForcesView" Height="300" Width="300">
+    <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Black">
+        <ContentPresenter Content="{Binding AccelerationMap, Mode=TwoWay}"/>
+    </Canvas>
+</Window>
