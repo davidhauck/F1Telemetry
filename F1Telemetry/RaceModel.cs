@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace F1Telemetry
 {
-    class RaceModel
+    public class RaceModel
     {
         public RaceModel()
         {

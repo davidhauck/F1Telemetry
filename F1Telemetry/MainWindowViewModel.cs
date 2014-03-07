@@ -18,6 +18,7 @@ using Microsoft.Win32;
 using F1Telemetry.Core;
 using F1Telemetry.Track;
 using F1Telemetry.Forces;
+using F1Telemetry.Upload;
 
 namespace F1Telemetry
 {
@@ -150,9 +151,17 @@ namespace F1Telemetry
             if (_rm != null)
             {
                 DrawForces();
-                //DrawRpms();
+                CreateUploadWindow();
                 DrawTrack();
             }
+        }
+
+        private void CreateUploadWindow()
+        {
+            UploadView uploadview = new UploadView();
+            uploadview.UploadModel.UpdateValues(_rm);
+            uploadview.Topmost = true;
+            uploadview.Show();
         }
 
         private void DrawForces()

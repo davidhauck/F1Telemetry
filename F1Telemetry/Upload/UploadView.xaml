@@ -1,0 +1,22 @@
+﻿<Window x:Class="F1Telemetry.Upload.UploadView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="UploadView" Height="398" Width="409">
+    <Grid>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="271,261,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Text="{Binding Username}"/>
+        <Label Content="Username" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="203,258,0,0"/>
+        <PasswordBox HorizontalAlignment="Left" Height="23" Margin="271,295,0,0" VerticalAlignment="Top" Width="120" Name="PassBox"/>
+        <Label Content="Password" HorizontalAlignment="Left" Margin="206,292,0,0" VerticalAlignment="Top"/>
+        <Label Content="Track" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <Label Content="Best Lap" HorizontalAlignment="Left" Margin="53,10,0,0" VerticalAlignment="Top"/>
+        <Label Content="Sector 1" HorizontalAlignment="Left" Margin="112,10,0,0" VerticalAlignment="Top"/>
+        <Label Content="Sector 2" HorizontalAlignment="Left" Margin="170,10,0,0" VerticalAlignment="Top"/>
+        <Label Content="Sector 3" HorizontalAlignment="Left" Margin="228,10,0,0" VerticalAlignment="Top"/>
+        <Label Content="{Binding Track}" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top"/>
+        <Label Content="{Binding BestLap}" HorizontalAlignment="Left" Margin="53,36,0,0" VerticalAlignment="Top"/>
+        <Label Content="{Binding Sector1}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="112,41,0,0"/>
+        <Label Content="{Binding Sector2}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="170,41,0,0"/>
+        <Label Content="{Binding Sector3}" HorizontalAlignment="Left" Margin="228,41,0,0" VerticalAlignment="Top"/>
+        <Button Content="Upload Times" HorizontalAlignment="Left" Margin="300,337,0,0" VerticalAlignment="Top" Width="91" RenderTransformOrigin="0.733,0.5" Command="{Binding UploadClick}"/>
+    </Grid>
+</Window>
