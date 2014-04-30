@@ -30,6 +30,8 @@ namespace F1Telemetry
         IPEndPoint _senderIP;
         string _filepath;
 
+        public Action<float, float, float, float, int> UploadLap;
+
         MemberInfo[] _members;
 
         string _output;
@@ -45,6 +47,19 @@ namespace F1Telemetry
             }
         }
 
+        private bool _shouldUploadLapsToServer;
+        public bool ShouldUploadLapsToServer
+        {
+            get
+            {
+                return _shouldUploadLapsToServer;
+            }
+            set
+            {
+                SetProperty(ref _shouldUploadLapsToServer, value);
+            }
+        }
+
         private ICommand _previousRaceClick;
         public ICommand PreviousRaceClick
         {
@@ -55,6 +70,19 @@ namespace F1Telemetry
                     _previousRaceClick = new RelayCommand(p => this.OpenOldRace());
                 }
                 return _previousRaceClick;
+            }
+        }
+
+        private ICommand _beginServerSyncClick;
+        public ICommand BeginServerSyncClick
+        {
+            get
+            {
+                if (_beginServerSyncClick == null)
+                {
+                    _beginServerSyncClick = new RelayCommand(p => this.BeginServerSync());
+                }
+                return _beginServerSyncClick;
             }
         }
 
@@ -130,9 +158,11 @@ namespace F1Telemetry
                     completedLaps.Add((int)_rm.CompletedLapsInRace[i]);
                 }
 
+                bool shouldCreateCharts = true;
                 if (completedLaps[0] > completedLaps[completedLaps.Count - 1] - 2)
                 {
-                    throw new Exception("not enough laps to accurately gather data");
+                    shouldCreateCharts = false;
+                    //throw new Exception("not enough laps to accurately gather data");
                 }
 
                 _rm.TurnSections = Utils.FindTurnsBasedOnLap(completedLaps, accelerations, coordinates, completedLaps[0] + 1, out numberOfSections);
@@ -142,17 +172,50 @@ namespace F1Telemetry
                 //{
                 //    CollectionSections.Add(i.ToString());
                 //}
-                UpdateScreen();
+                UpdateScreen(shouldCreateCharts);
             }
         }
 
-        private void UpdateScreen()
+
+        private void BeginServerSync()
+        {
+            ServicePointManager
+                .ServerCertificateValidationCallback +=
+                (sender, cert, chain, sslPolicyErrors) => true;
+
+            string server = "https://racingleaguecharts.com/sessions/register";
+            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(server);
+            httpWebRequest.Method = "POST";
+            httpWebRequest.ContentType = "application/json";
+
+            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+            {
+                string json = String.Format("{{ \"driver\": {0}, \"track\": {1}, \"type\": {2} }}", "\"jetiger\"", "4444.94727", "10.0");
+                streamWriter.Write(json);
+                streamWriter.Flush();
+                streamWriter.Close();
+
+                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    var result = streamReader.ReadToEnd();
+                    int x = 0;
+                }
+            }
+        }
+
+        private void UpdateScreen(bool shouldCreateCharts)
         {
             if (_rm != null)
             {
-                DrawForces();
                 CreateUploadWindow();
-                DrawTrack();
+
+                if (shouldCreateCharts)
+                {
+                    DrawForces();
+                    DrawTrack();
+                }
             }
         }
 
@@ -275,6 +338,7 @@ namespace F1Telemetry
 
         void BeginListen()
         {
+            _rm = new RaceModel();
             new Thread(() =>
                 {
                     while (true)
@@ -285,7 +349,7 @@ namespace F1Telemetry
                         handle.Free();
 
                         AppendToFile(packet);
-
+                        _rm.Add(packet);
                         UpdateScreen(packet);
                     }
                 }).Start();
@@ -343,17 +407,41 @@ namespace F1Telemetry
             }
         }
 
+        int _previousLap;
         private void UpdateScreen(TelemetryPacket packet)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
                 int height = 100;
-
+                if (UploadLap != null)
+                {
+                    if (_previousLap != packet.Lap)
+                    {
+                        if (_previousLap == 0)
+                        {
+                            if (packet.Lap == 1)
+                                SubmitLapOnline(packet);
+                        }
+                        else
+                            SubmitLapOnline(packet);
+                        _previousLap = (int)packet.Lap;
+                    }
+                }
                 DrawThrottle(packet, height);
                 DrawBrake(packet, height);
                 DrawTurning(packet, height);
                 DrawRpms(packet);
             });
+        }
+
+        private void SubmitLapOnline(TelemetryPacket packet)
+        {
+            float totalLapTime = packet.PreviousLapTime;
+            float Sector1Time = _rm.TimeSector1[_rm.TimeSector1.Count - 2];
+            float Sector2Time = _rm.TimeSector2[_rm.TimeSector2.Count - 2];
+            float Sector3Time = totalLapTime - Sector1Time - Sector2Time;
+            int trackNum = (int)Enum.Parse(typeof(F1Telemetry.Upload.UploadView.TrackName), RaceModel.DistancesToNames[packet.TrackLength]);
+            UploadLap(totalLapTime, Sector1Time, Sector2Time, Sector3Time, trackNum);
         }
 
         int RpmHeight = 150;

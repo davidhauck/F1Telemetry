@@ -8,6 +8,51 @@ namespace F1Telemetry
 {
     public class RaceModel
     {
+
+        //Australia: 4813.119
+        //Malaysia: 4705.806
+        //China: 5012.697
+        //Bahrain: 4537.41
+        //Spain: 4040.82861
+        //Monaco: 2978.15625
+        //Canada: 3630.2605
+        //Britain: 5045.673
+        //Germany: 4632.08057
+        //Hungary: 4084.47168
+        //Spa: 6291.4834
+        //Italy: 4791.983
+        //Singapore: 4524.837
+        //Korea: 4567.04346
+        //Japan: 5137.523
+        //India: 4576.361
+        //Abu Dhabi: 5188.55762
+        //United States: 5041.783
+        //Brazil: 3419.33154
+
+        public static Dictionary<float, string> DistancesToNames = new Dictionary<float, string>
+            {
+                {5301.984f, "Australia"},
+                {5549.814f, "Malaysia"},
+                {5444.122f, "China"},
+                {5409.19f, "Bahrain"},
+                {4651.133f, "Spain"},
+                {3322.417f, "Monaco"},
+                {4370.895f, "Canada"},
+                {5896.262f, "Britain"},
+                {5148.048f, "Germany"},
+                {4378.222f, "Hungary"},
+                {7003.279f, "Belgium"},
+                {5797.636f, "Italy"},
+                {5059.145f, "Singapore"},
+                {5586.651f, "Korea"},
+                {5817.484f, "Japan"},
+                {5142.777f, "India"},
+                {5542.2f, "Abu Dhabi"},
+                {5515.627f, "United States"},
+                {4293.856f, "Brazil"}
+            };
+
+
         public RaceModel()
         {
             Time = new List<float>();
@@ -148,5 +193,12 @@ namespace F1Telemetry
         public List<float> NewField28 { get; set; }
         public List<string> Empty { get; set; }
         public List<int> TurnSections { get; set; }
+
+        public void Add(TelemetryPacket packet)
+        {
+            Time.Add(packet.Time);
+            TimeSector1.Add(packet.TimeSector1);
+            TimeSector2.Add(packet.TimeSector2);
+        }
     }
 }

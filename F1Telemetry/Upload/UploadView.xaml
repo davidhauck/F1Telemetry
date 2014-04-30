@@ -8,15 +8,16 @@
         <PasswordBox HorizontalAlignment="Left" Height="23" Margin="271,295,0,0" VerticalAlignment="Top" Width="120" Name="PassBox"/>
         <Label Content="Password" HorizontalAlignment="Left" Margin="206,292,0,0" VerticalAlignment="Top"/>
         <Label Content="Track" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <Label Content="Best Lap" HorizontalAlignment="Left" Margin="53,10,0,0" VerticalAlignment="Top"/>
-        <Label Content="Sector 1" HorizontalAlignment="Left" Margin="112,10,0,0" VerticalAlignment="Top"/>
-        <Label Content="Sector 2" HorizontalAlignment="Left" Margin="170,10,0,0" VerticalAlignment="Top"/>
-        <Label Content="Sector 3" HorizontalAlignment="Left" Margin="228,10,0,0" VerticalAlignment="Top"/>
+        <Label Content="Best Lap" HorizontalAlignment="Left" Margin="73,10,0,0" VerticalAlignment="Top"/>
+        <Label Content="Sector 1" HorizontalAlignment="Left" Margin="132,10,0,0" VerticalAlignment="Top"/>
+        <Label Content="Sector 2" HorizontalAlignment="Left" Margin="190,10,0,0" VerticalAlignment="Top"/>
+        <Label Content="Sector 3" HorizontalAlignment="Left" Margin="248,10,0,0" VerticalAlignment="Top"/>
         <Label Content="{Binding Track}" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top"/>
-        <Label Content="{Binding BestLap}" HorizontalAlignment="Left" Margin="53,36,0,0" VerticalAlignment="Top"/>
-        <Label Content="{Binding Sector1}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="112,41,0,0"/>
-        <Label Content="{Binding Sector2}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="170,41,0,0"/>
-        <Label Content="{Binding Sector3}" HorizontalAlignment="Left" Margin="228,41,0,0" VerticalAlignment="Top"/>
-        <Button Content="Upload Times" HorizontalAlignment="Left" Margin="300,337,0,0" VerticalAlignment="Top" Width="91" RenderTransformOrigin="0.733,0.5" Command="{Binding UploadClick}"/>
+        <Label Content="{Binding BestLap}" HorizontalAlignment="Left" Margin="73,41,0,0" VerticalAlignment="Top" RenderTransformOrigin="3.9,1.4"/>
+        <Label Content="{Binding Sector1}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="132,41,0,0"/>
+        <Label Content="{Binding Sector2}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="190,41,0,0"/>
+        <Label Content="{Binding Sector3}" HorizontalAlignment="Left" Margin="248,41,0,0" VerticalAlignment="Top"/>
+        <Button Content="Upload Times" HorizontalAlignment="Left" Margin="300,337,0,0" VerticalAlignment="Top" Width="91" Click="Button_Click"/>
+        <TextBlock Text="{Binding Message}" HorizontalAlignment="Left" Margin="239,217,0,0" VerticalAlignment="Top" TextWrapping="WrapWithOverflow" />
     </Grid>
 </Window>

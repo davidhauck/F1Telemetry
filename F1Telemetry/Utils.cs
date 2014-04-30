@@ -192,7 +192,7 @@ namespace F1Telemetry.Core
             List<int> newSections = new List<int>();
 
             int currentSection = 0;
-            for (int i = 0; i < numSections * laps.Count + 1; i++)
+            for (int i = 0; i < numSections * laps.Count; i++)
             {
                 for (int k = (i == 0) ? 0 : sectionSplits[i - 1]; k < sectionSplits[i]; k++)
                 {

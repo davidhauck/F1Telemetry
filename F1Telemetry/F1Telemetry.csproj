@@ -37,6 +37,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -61,6 +63,16 @@
     <Compile Include="Forces\ForcesViewModel.cs" />
     <Compile Include="RaceModel.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="Service References\LocalWebReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\OnlineWebReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Track\Track.cs" />
     <Compile Include="Track\TrackView.xaml.cs">
       <DependentUpon>TrackView.xaml</DependentUpon>
@@ -71,6 +83,7 @@
     </Compile>
     <Compile Include="Utils.cs" />
     <Compile Include="WebService.cs" />
+    <Compile Include="WebService\LocalWebService.cs" />
     <Page Include="Forces\ForcesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -122,9 +135,60 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="Service References\LocalWebReference\F1Telemetry.LocalWebReference.TestLoginResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LocalWebReference\F1Telemetry.LocalWebReference.UploadLapResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LocalWebReference\F1Telemetry.LocalWebReference.UploadRaceResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LocalWebReference\WebService.wsdl" />
+    <None Include="Service References\OnlineWebReference\F1Telemetry.OnlineWebReference.UploadRaceResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OnlineWebReference\WebService.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\LocalWebReference\" />
+    <WCFMetadataStorage Include="Service References\OnlineWebReference\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\OnlineWebReference\WebService.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\OnlineWebReference\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\OnlineWebReference\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\OnlineWebReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\LocalWebReference\WebService.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\LocalWebReference\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\LocalWebReference\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\LocalWebReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

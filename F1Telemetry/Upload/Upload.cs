@@ -87,45 +87,42 @@ namespace F1Telemetry.Upload
             }
         }
 
-        private float _sector1Float;
-        private float _sector2Float;
-        private float _sector3Float;
-
-
-        private ICommand _uploadClick;
-        public ICommand UploadClick
+        private string _message;
+        public String Message
         {
             get
             {
-                if (_uploadClick == null)
-                {
-                    _uploadClick = new RelayCommand(p => this.UploadRace());
-                }
-                return _uploadClick;
+                return _message;
+            }
+            set
+            {
+                SetProperty(ref _message, value);
             }
         }
 
-        private void UploadRace()
-        {
-            WebService service = new WebService();
-            service.UploadRace(Username, Track, BestLap.ToString(), _sector1Float, _sector2Float, _sector3Float);
-        }
+        public float Sector1Float {get;set;}
+        public float Sector2Float {get;set;}
+        public float Sector3Float {get;set;}
 
         public void UpdateValues(RaceModel model)
         {
-            _sector1Float = model.TimeSector1.Where(s => s != 0).Min();
-            _sector2Float = model.TimeSector2.Where(s => s != 0).Min();
 
             float bestLapTime = float.MaxValue;
             float previousSectors = 0;
-            _sector3Float = float.MaxValue;
+            int bestLapIndex = 0;
+            Sector3Float = float.MaxValue;
             for (int i = 1; i < model.PreviousLapTime.Count; i++)
             {
                 if (model.Lap[i] != model.Lap[i-1])
                 {
                     float value = model.PreviousLapTime[i] - previousSectors;
-                    _sector3Float = Math.Min(_sector3Float, value);
+                    if (model.PreviousLapTime[i] < bestLapTime)
+                    {
+                        bestLapTime = model.PreviousLapTime[i];
+                        Sector3Float = model.PreviousLapTime[i] - model.TimeSector1[i - 1] - model.TimeSector2[i - 1];
+                    }
                     bestLapTime = Math.Min(bestLapTime, model.PreviousLapTime[i]);
+                    bestLapIndex = i-1;
                 }
                 else
                 {
@@ -133,12 +130,14 @@ namespace F1Telemetry.Upload
                 }
             }
 
-            Username = "jetiger";
-            Track = "Spa";
+            Sector1Float = model.TimeSector1[bestLapIndex];
+            Sector2Float = model.TimeSector2[bestLapIndex];
+            Track = RaceModel.DistancesToNames[model.TrackLength[0]];
+
             BestLap = bestLapTime.ToString();
-            Sector1 = _sector1Float.ToString();
-            Sector2 = _sector2Float.ToString();
-            Sector3 = _sector3Float.ToString();
+            Sector1 = Sector1Float.ToString();
+            Sector2 = Sector2Float.ToString();
+            Sector3 = Sector3Float.ToString();
         }
     }
 }

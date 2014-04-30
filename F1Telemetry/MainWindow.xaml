@@ -3,11 +3,21 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="700" Width="700">
     <Grid>
-        <TextBlock HorizontalAlignment="Left" Height="60" TextWrapping="Wrap" Text="{Binding Output}" VerticalAlignment="Top" Width="282"/>
+        <Grid Width="282" HorizontalAlignment="Left" Height="60" VerticalAlignment="Top">
+            <ScrollViewer Name="OutputScroller">
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Output}" VerticalAlignment="Top" Width="282"/>
+            </ScrollViewer>
+        </Grid>
         <Image Source="{Binding ThrottleImage, Mode=TwoWay}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="100"/>
         <Image Source="{Binding BrakeImage, Mode=TwoWay}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="100" Margin="0,0,20,0"/>
         <Image Source="{Binding TurnImage, Mode=TwoWay}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="100" Height="20" Margin="0,40,45,0"/>
         <Image Source="{Binding Rpms, Mode=TwoWay}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="400" Height="150" Margin="0,211,120,0"/>
         <Button Content="Open Previous Race" HorizontalAlignment="Left" Margin="0,60,0,0" VerticalAlignment="Top" Width="119" Command="{Binding PreviousRaceClick}"/>
+        <Button Content="Stop uploading laps" HorizontalAlignment="Left" VerticalAlignment="Top" Width="139" Margin="10,200,0,0" Height="27" Click="StopUploading_Click"/>
+        <TextBox HorizontalAlignment="Left" Margin="59,122,0,0" TextWrapping="Wrap" Text="{Binding Username}" VerticalAlignment="Top" Width="120" Name="UsernameTb"/>
+        <PasswordBox HorizontalAlignment="Left" Margin="60,145,0,0" VerticalAlignment="Top" Width="119" Name="PasswordBox"/>
+        <Button Content="Begin uploading laps" HorizontalAlignment="Left" VerticalAlignment="Top" Width="139" Margin="10,168,0,0" Height="27" Click="StartUploading_Click"/>
+        <TextBlock HorizontalAlignment="Left" Margin="2,124,0,0" TextWrapping="Wrap" Text="Username" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Password" VerticalAlignment="Top" Margin="5,147,0,0"/>
     </Grid>
 </Window>
