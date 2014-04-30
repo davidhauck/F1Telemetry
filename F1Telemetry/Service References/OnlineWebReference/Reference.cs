@@ -21,6 +21,20 @@ namespace F1Telemetry.OnlineWebReference {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://telemetry.azurewebsites.net/RaceUpload/UploadRace", ReplyAction="*")]
         System.Threading.Tasks.Task<F1Telemetry.OnlineWebReference.UploadRaceResponse> UploadRaceAsync(F1Telemetry.OnlineWebReference.UploadRaceRequest request);
+        
+        // CODEGEN: Generating message contract since element name username from namespace http://telemetry.azurewebsites.net/RaceUpload is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="http://telemetry.azurewebsites.net/RaceUpload/UploadLap", ReplyAction="*")]
+        F1Telemetry.OnlineWebReference.UploadLapResponse UploadLap(F1Telemetry.OnlineWebReference.UploadLapRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://telemetry.azurewebsites.net/RaceUpload/UploadLap", ReplyAction="*")]
+        System.Threading.Tasks.Task<F1Telemetry.OnlineWebReference.UploadLapResponse> UploadLapAsync(F1Telemetry.OnlineWebReference.UploadLapRequest request);
+        
+        // CODEGEN: Generating message contract since element name username from namespace http://telemetry.azurewebsites.net/RaceUpload is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="http://telemetry.azurewebsites.net/RaceUpload/TestLogin", ReplyAction="*")]
+        F1Telemetry.OnlineWebReference.TestLoginResponse TestLogin(F1Telemetry.OnlineWebReference.TestLoginRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://telemetry.azurewebsites.net/RaceUpload/TestLogin", ReplyAction="*")]
+        System.Threading.Tasks.Task<F1Telemetry.OnlineWebReference.TestLoginResponse> TestLoginAsync(F1Telemetry.OnlineWebReference.TestLoginRequest request);
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -115,6 +129,170 @@ namespace F1Telemetry.OnlineWebReference {
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class UploadLapRequest {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="UploadLap", Namespace="http://telemetry.azurewebsites.net/RaceUpload", Order=0)]
+        public F1Telemetry.OnlineWebReference.UploadLapRequestBody Body;
+        
+        public UploadLapRequest() {
+        }
+        
+        public UploadLapRequest(F1Telemetry.OnlineWebReference.UploadLapRequestBody Body) {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://telemetry.azurewebsites.net/RaceUpload")]
+    public partial class UploadLapRequestBody {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string username;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
+        public string password;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+        public int track;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=3)]
+        public string laptime;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+        public double sector1;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+        public double sector2;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+        public double sector3;
+        
+        public UploadLapRequestBody() {
+        }
+        
+        public UploadLapRequestBody(string username, string password, int track, string laptime, double sector1, double sector2, double sector3) {
+            this.username = username;
+            this.password = password;
+            this.track = track;
+            this.laptime = laptime;
+            this.sector1 = sector1;
+            this.sector2 = sector2;
+            this.sector3 = sector3;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class UploadLapResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="UploadLapResponse", Namespace="http://telemetry.azurewebsites.net/RaceUpload", Order=0)]
+        public F1Telemetry.OnlineWebReference.UploadLapResponseBody Body;
+        
+        public UploadLapResponse() {
+        }
+        
+        public UploadLapResponse(F1Telemetry.OnlineWebReference.UploadLapResponseBody Body) {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://telemetry.azurewebsites.net/RaceUpload")]
+    public partial class UploadLapResponseBody {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string UploadLapResult;
+        
+        public UploadLapResponseBody() {
+        }
+        
+        public UploadLapResponseBody(string UploadLapResult) {
+            this.UploadLapResult = UploadLapResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class TestLoginRequest {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="TestLogin", Namespace="http://telemetry.azurewebsites.net/RaceUpload", Order=0)]
+        public F1Telemetry.OnlineWebReference.TestLoginRequestBody Body;
+        
+        public TestLoginRequest() {
+        }
+        
+        public TestLoginRequest(F1Telemetry.OnlineWebReference.TestLoginRequestBody Body) {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://telemetry.azurewebsites.net/RaceUpload")]
+    public partial class TestLoginRequestBody {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string username;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
+        public string password;
+        
+        public TestLoginRequestBody() {
+        }
+        
+        public TestLoginRequestBody(string username, string password) {
+            this.username = username;
+            this.password = password;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class TestLoginResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="TestLoginResponse", Namespace="http://telemetry.azurewebsites.net/RaceUpload", Order=0)]
+        public F1Telemetry.OnlineWebReference.TestLoginResponseBody Body;
+        
+        public TestLoginResponse() {
+        }
+        
+        public TestLoginResponse(F1Telemetry.OnlineWebReference.TestLoginResponseBody Body) {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://telemetry.azurewebsites.net/RaceUpload")]
+    public partial class TestLoginResponseBody {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=0)]
+        public bool TestLoginResult;
+        
+        public TestLoginResponseBody() {
+        }
+        
+        public TestLoginResponseBody(bool TestLoginResult) {
+            this.TestLoginResult = TestLoginResult;
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public interface WebServiceSoapChannel : F1Telemetry.OnlineWebReference.WebServiceSoap, System.ServiceModel.IClientChannel {
     }
@@ -177,6 +355,70 @@ namespace F1Telemetry.OnlineWebReference {
             inValue.Body.sector2 = sector2;
             inValue.Body.sector3 = sector3;
             return ((F1Telemetry.OnlineWebReference.WebServiceSoap)(this)).UploadRaceAsync(inValue);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        F1Telemetry.OnlineWebReference.UploadLapResponse F1Telemetry.OnlineWebReference.WebServiceSoap.UploadLap(F1Telemetry.OnlineWebReference.UploadLapRequest request) {
+            return base.Channel.UploadLap(request);
+        }
+        
+        public string UploadLap(string username, string password, int track, string laptime, double sector1, double sector2, double sector3) {
+            F1Telemetry.OnlineWebReference.UploadLapRequest inValue = new F1Telemetry.OnlineWebReference.UploadLapRequest();
+            inValue.Body = new F1Telemetry.OnlineWebReference.UploadLapRequestBody();
+            inValue.Body.username = username;
+            inValue.Body.password = password;
+            inValue.Body.track = track;
+            inValue.Body.laptime = laptime;
+            inValue.Body.sector1 = sector1;
+            inValue.Body.sector2 = sector2;
+            inValue.Body.sector3 = sector3;
+            F1Telemetry.OnlineWebReference.UploadLapResponse retVal = ((F1Telemetry.OnlineWebReference.WebServiceSoap)(this)).UploadLap(inValue);
+            return retVal.Body.UploadLapResult;
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<F1Telemetry.OnlineWebReference.UploadLapResponse> F1Telemetry.OnlineWebReference.WebServiceSoap.UploadLapAsync(F1Telemetry.OnlineWebReference.UploadLapRequest request) {
+            return base.Channel.UploadLapAsync(request);
+        }
+        
+        public System.Threading.Tasks.Task<F1Telemetry.OnlineWebReference.UploadLapResponse> UploadLapAsync(string username, string password, int track, string laptime, double sector1, double sector2, double sector3) {
+            F1Telemetry.OnlineWebReference.UploadLapRequest inValue = new F1Telemetry.OnlineWebReference.UploadLapRequest();
+            inValue.Body = new F1Telemetry.OnlineWebReference.UploadLapRequestBody();
+            inValue.Body.username = username;
+            inValue.Body.password = password;
+            inValue.Body.track = track;
+            inValue.Body.laptime = laptime;
+            inValue.Body.sector1 = sector1;
+            inValue.Body.sector2 = sector2;
+            inValue.Body.sector3 = sector3;
+            return ((F1Telemetry.OnlineWebReference.WebServiceSoap)(this)).UploadLapAsync(inValue);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        F1Telemetry.OnlineWebReference.TestLoginResponse F1Telemetry.OnlineWebReference.WebServiceSoap.TestLogin(F1Telemetry.OnlineWebReference.TestLoginRequest request) {
+            return base.Channel.TestLogin(request);
+        }
+        
+        public bool TestLogin(string username, string password) {
+            F1Telemetry.OnlineWebReference.TestLoginRequest inValue = new F1Telemetry.OnlineWebReference.TestLoginRequest();
+            inValue.Body = new F1Telemetry.OnlineWebReference.TestLoginRequestBody();
+            inValue.Body.username = username;
+            inValue.Body.password = password;
+            F1Telemetry.OnlineWebReference.TestLoginResponse retVal = ((F1Telemetry.OnlineWebReference.WebServiceSoap)(this)).TestLogin(inValue);
+            return retVal.Body.TestLoginResult;
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<F1Telemetry.OnlineWebReference.TestLoginResponse> F1Telemetry.OnlineWebReference.WebServiceSoap.TestLoginAsync(F1Telemetry.OnlineWebReference.TestLoginRequest request) {
+            return base.Channel.TestLoginAsync(request);
+        }
+        
+        public System.Threading.Tasks.Task<F1Telemetry.OnlineWebReference.TestLoginResponse> TestLoginAsync(string username, string password) {
+            F1Telemetry.OnlineWebReference.TestLoginRequest inValue = new F1Telemetry.OnlineWebReference.TestLoginRequest();
+            inValue.Body = new F1Telemetry.OnlineWebReference.TestLoginRequestBody();
+            inValue.Body.username = username;
+            inValue.Body.password = password;
+            return ((F1Telemetry.OnlineWebReference.WebServiceSoap)(this)).TestLoginAsync(inValue);
         }
     }
 }

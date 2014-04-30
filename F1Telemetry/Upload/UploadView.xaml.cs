@@ -60,8 +60,8 @@ namespace F1Telemetry.Upload
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             UploadModel.Message = "Uploading";
-            //OnlineWebReference.WebServiceSoapClient service = new OnlineWebReference.WebServiceSoapClient();
-            LocalWebReference.WebServiceSoapClient service = new LocalWebReference.WebServiceSoapClient();
+            OnlineWebReference.WebServiceSoapClient service = new OnlineWebReference.WebServiceSoapClient();
+            //LocalWebReference.WebServiceSoapClient service = new LocalWebReference.WebServiceSoapClient();
             try
             {
                 UploadModel.Message = service.UploadRace(UploadModel.Username, PassBox.Password, (int)Enum.Parse(typeof(TrackName), UploadModel.Track), UploadModel.BestLap.ToString(), UploadModel.Sector1Float, UploadModel.Sector2Float, UploadModel.Sector3Float);

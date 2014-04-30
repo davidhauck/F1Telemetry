@@ -20,6 +20,8 @@ namespace F1Telemetry
     /// </summary>
     public partial class MainWindow : Window
     {
+
+
         private MainWindowViewModel ViewModel
         {
             get
@@ -36,7 +38,8 @@ namespace F1Telemetry
 
         bool TestConnectionToServer()
         {
-            LocalWebReference.WebServiceSoapClient service = new LocalWebReference.WebServiceSoapClient();
+            OnlineWebReference.WebServiceSoapClient service = new OnlineWebReference.WebServiceSoapClient();
+            //LocalWebReference.WebServiceSoapClient service = new LocalWebReference.WebServiceSoapClient();
             return service.TestLogin(UsernameTb.Text, PasswordBox.Password);
         }
 
@@ -56,7 +59,7 @@ namespace F1Telemetry
                     OutputScroller.ScrollToBottom();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 ViewModel.Output += "\r\nCould not connect to a network. Please check your internet connection.";
                 OutputScroller.ScrollToBottom();
@@ -81,10 +84,11 @@ namespace F1Telemetry
             {
                 try
                 {
-                    ViewModel.Output += String.Format("\r\nLap uploaded: Total:{0}, Sector 1: {1}, Sector 2: {2}, Sector 3: {3}.", totalLapTime, sector1, sector2, sector3);
                     OutputScroller.ScrollToBottom();
-                    LocalWebReference.WebServiceSoapClient service = new LocalWebReference.WebServiceSoapClient();
+                    OnlineWebReference.WebServiceSoapClient service = new OnlineWebReference.WebServiceSoapClient();
+                    //LocalWebReference.WebServiceSoapClient service = new LocalWebReference.WebServiceSoapClient();
                     service.UploadLap(UsernameTb.Text, PasswordBox.Password, trackNum, totalLapTime.ToString(), sector1, sector2, sector3);
+                    ViewModel.Output += String.Format("\r\nLap uploaded: Total:{0}, Sector 1: {1}, Sector 2: {2}, Sector 3: {3}.", totalLapTime, sector1, sector2, sector3);
                 }
                 catch (Exception e)
                 {

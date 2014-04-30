@@ -104,6 +104,15 @@ namespace F1Telemetry
                 storedRpms.Add(new List<Point>());
             }
 
+            try
+            {
+                EditConfigFile();
+            }
+            catch(Exception e)
+            {
+                Output = "Cannot find game config file. Telemetry may not be able to be receieved.";
+            }
+
             string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\F1Telemetry\\";
             string fileName = DateTime.Now.ToString("MM-dd-yyyy_HH-mm") + ".csv";
             _filepath = System.IO.Path.Combine(path, fileName);
@@ -113,66 +122,90 @@ namespace F1Telemetry
             if (!isExists)
                 System.IO.Directory.CreateDirectory(path);
 
-            Type type = typeof(TelemetryPacket);
-            _members = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
-
-            using (StreamWriter f = File.AppendText(_filepath))
-            {
-                foreach (var physMember in _members)
-                {
-                    f.Write(physMember.Name + ",");
-                }
-                f.Write("\r\n");
-            }
             BeginListen();
+        }
+
+        void EditConfigFile()
+        {
+            string gameConfigPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\My Games\\FormulaOne2013\\hardwaresettings\\hardware_settings_config.xml";
+            string[] lines = System.IO.File.ReadAllLines(gameConfigPath);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (lines[i].Contains("motion"))
+                {
+                    int index = lines[i].IndexOf("extradata");
+                    int nextIndex = lines[i].IndexOf("\"", index);
+                    string newString = lines[i].Substring(0, nextIndex + 1);
+                    newString += "3";
+                    newString += lines[i].Substring(nextIndex + 2, lines[i].Length - nextIndex - 2);
+                    lines[i] = newString;
+                    int x = 0;
+                }
+            }
+
+            System.IO.File.WriteAllLines(gameConfigPath, lines);
         }
 
         RaceModel _rm;
 
         private void OpenOldRace()
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.FileName = "sample";
-            ofd.DefaultExt = ".csv";
-            ofd.Filter = "Comma Separated Values (.csv)|*.csv";
-            Nullable<bool> result = ofd.ShowDialog();
-            if (result == true)
+            try
             {
-                string filename = ofd.FileName;
-                //RacingVisibility = Visibility.Collapsed;
-                //AnalyzingVisibility = Visibility.Visible;
-                _rm = ReadFile(filename);
-                //CollectionLaps.Clear();
-                //CollectionLaps.Add("All Laps");
-                //for (int i = 1; i < rm.CompletedLaps[rm.CompletedLaps.Count - 1] + 1; i++)
-                //{
-                //    CollectionLaps.Add(i.ToString());
-                //}
-                int numberOfSections;
-
-                List<List<float>> accelerations = new List<List<float>>() { _rm.LateralAcceleration, null, _rm.LongitudinalAcceleration };
-                List<List<float>> coordinates = new List<List<float>>() { _rm.X, null, _rm.Z };
-                List<int> completedLaps = new List<int>(_rm.CompletedLapsInRace.Count);
-                for (int i = 0; i < _rm.CompletedLapsInRace.Count; i++)
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.FileName = "sample";
+                ofd.DefaultExt = ".csv";
+                ofd.Filter = "Comma Separated Values (.csv)|*.csv";
+                Nullable<bool> result = ofd.ShowDialog();
+                if (result == true)
                 {
-                    completedLaps.Add((int)_rm.CompletedLapsInRace[i]);
-                }
+                    string filename = ofd.FileName;
+                    //RacingVisibility = Visibility.Collapsed;
+                    //AnalyzingVisibility = Visibility.Visible;
+                    try
+                    {
+                        _rm = ReadFile(filename);
+                    }
+                    catch (Exception e)
+                    {
+                        Output = "File is corrupt.";
+                    }
+                    //CollectionLaps.Clear();
+                    //CollectionLaps.Add("All Laps");
+                    //for (int i = 1; i < rm.CompletedLaps[rm.CompletedLaps.Count - 1] + 1; i++)
+                    //{
+                    //    CollectionLaps.Add(i.ToString());
+                    //}
+                    int numberOfSections;
 
-                bool shouldCreateCharts = true;
-                if (completedLaps[0] > completedLaps[completedLaps.Count - 1] - 2)
-                {
-                    shouldCreateCharts = false;
-                    //throw new Exception("not enough laps to accurately gather data");
-                }
+                    List<List<float>> accelerations = new List<List<float>>() { _rm.LateralAcceleration, null, _rm.LongitudinalAcceleration };
+                    List<List<float>> coordinates = new List<List<float>>() { _rm.X, null, _rm.Z };
+                    List<int> completedLaps = new List<int>(_rm.CompletedLapsInRace.Count);
+                    for (int i = 0; i < _rm.CompletedLapsInRace.Count; i++)
+                    {
+                        completedLaps.Add((int)_rm.CompletedLapsInRace[i]);
+                    }
 
-                _rm.TurnSections = Utils.FindTurnsBasedOnLap(completedLaps, accelerations, coordinates, completedLaps[0] + 1, out numberOfSections);
-                //CollectionSections.Clear();
-                //CollectionSections.Add("All Sections");
-                //for (int i = 1; i <= numberOfSections; i++)
-                //{
-                //    CollectionSections.Add(i.ToString());
-                //}
-                UpdateScreen(shouldCreateCharts);
+                    bool shouldCreateCharts = true;
+                    if (completedLaps[0] > completedLaps[completedLaps.Count - 1] - 2)
+                    {
+                        shouldCreateCharts = false;
+                        //throw new Exception("not enough laps to accurately gather data");
+                    }
+
+                    _rm.TurnSections = Utils.FindTurnsBasedOnLap(completedLaps, accelerations, coordinates, completedLaps[0] + 1, out numberOfSections);
+                    //CollectionSections.Clear();
+                    //CollectionSections.Add("All Sections");
+                    //for (int i = 1; i <= numberOfSections; i++)
+                    //{
+                    //    CollectionSections.Add(i.ToString());
+                    //}
+                    UpdateScreen(shouldCreateCharts);
+                }
+            }
+            catch (Exception e)
+            {
+                Output = "File is open in another program. Probably this one actually. Close this app, reopen it, and try to load that file again. If that doesn't work, im out of ideas.";
             }
         }
 
@@ -339,7 +372,7 @@ namespace F1Telemetry
         void BeginListen()
         {
             _rm = new RaceModel();
-            new Thread(() =>
+            Thread t = new Thread(() =>
                 {
                     while (true)
                     {
@@ -352,7 +385,9 @@ namespace F1Telemetry
                         _rm.Add(packet);
                         UpdateScreen(packet);
                     }
-                }).Start();
+                });
+            t.IsBackground = true;
+            t.Start();
         }
 
         private ImageSource _throttleImage;
@@ -646,8 +681,23 @@ namespace F1Telemetry
             TurnImage = geometryImage;
         }
 
+        bool fileCreated = false;
         private void AppendToFile(TelemetryPacket packet)
         {
+            if (!fileCreated)
+            {
+                Type type = typeof(TelemetryPacket);
+                _members = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
+
+                using (StreamWriter f = File.AppendText(_filepath))
+                {
+                    foreach (var physMember in _members)
+                    {
+                        f.Write(physMember.Name + ",");
+                    }
+                    f.Write("\r\n");
+                }
+            }
             using (StreamWriter f = File.AppendText(_filepath))
             {
                 foreach (var x in _members)
