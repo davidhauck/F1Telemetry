@@ -24,7 +24,7 @@ namespace F1Telemetry
 {
     class MainWindowViewModel : BaseViewModel
     {
-        private const int PORTNUM = 20777;
+        private const int PORTNUM = 20776;
         private const string IP = "127.0.0.1";
         UdpClient _socket;
         IPEndPoint _senderIP;
@@ -127,23 +127,37 @@ namespace F1Telemetry
 
         void EditConfigFile()
         {
-            string gameConfigPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\My Games\\FormulaOne2013\\hardwaresettings\\hardware_settings_config.xml";
-            string[] lines = System.IO.File.ReadAllLines(gameConfigPath);
-            for (int i = 0; i < lines.Length; i++)
+            try
             {
-                if (lines[i].Contains("motion"))
+                string gameConfigPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\My Games\\FormulaOne2014\\hardwaresettings\\hardware_settings_config.xml";
+                string[] lines = System.IO.File.ReadAllLines(gameConfigPath);
+                for (int i = 0; i < lines.Length; i++)
                 {
-                    int index = lines[i].IndexOf("extradata");
-                    int nextIndex = lines[i].IndexOf("\"", index);
-                    string newString = lines[i].Substring(0, nextIndex + 1);
-                    newString += "3";
-                    newString += lines[i].Substring(nextIndex + 2, lines[i].Length - nextIndex - 2);
-                    lines[i] = newString;
-                    int x = 0;
+                    if (lines[i].Contains("motion"))
+                    {
+                        lines[i] = ChangeValue(lines[i], "extradata", "3");
+                        lines[i] = ChangeValue(lines[i], "ip", "127.0.0.1");
+                        lines[i] = ChangeValue(lines[i], "port", "20777");
+                    }
                 }
-            }
 
-            System.IO.File.WriteAllLines(gameConfigPath, lines);
+                System.IO.File.WriteAllLines(gameConfigPath, lines);
+            }
+            catch (Exception e)
+            {
+                Output += "\r\nCould not find config file. Please find hardware_settings_config.xml and ensure the line beginning with \"<motion\" looks like this:\r\n	<motion enabled=\"true\" ip=\"127.0.0.1\" port=\"20777\" delay=\"1\" extradata=\"3\" />";
+            }
+        }
+
+        private string ChangeValue(string line, string word, string newValue)
+        {
+            int index = line.IndexOf(word);
+            int nextIndex = line.IndexOf("\"", index);
+            string newString = line.Substring(0, nextIndex + 1);
+            newString += newValue;
+            nextIndex = line.IndexOf("\"", nextIndex + 1);
+            newString += line.Substring(nextIndex, line.Length - nextIndex);
+            return newString;
         }
 
         RaceModel _rm;
@@ -484,7 +498,7 @@ namespace F1Telemetry
         
         List<List<System.Windows.Point>> storedRpms;
         List<LineGeometry> _lines;
-        int NUM_GEARS = 7;
+        int NUM_GEARS = 8;
         int _counter = 0;
         private void DrawRpms(TelemetryPacket packet)
         {
