@@ -24,7 +24,7 @@ namespace F1Telemetry
 {
     class MainWindowViewModel : BaseViewModel
     {
-        private const int PORTNUM = 20776;
+        private const int PORTNUM = 20777;
         private const string IP = "127.0.0.1";
         UdpClient _socket;
         IPEndPoint _senderIP;
@@ -92,10 +92,10 @@ namespace F1Telemetry
 
         public MainWindowViewModel()
         {
-            _socket = new UdpClient();
-            _socket.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-            _socket.ExclusiveAddressUse = false;
-            _socket.Client.Bind(new IPEndPoint(IPAddress.Any, PORTNUM));
+            IPEndPoint point = new IPEndPoint(IPAddress.Any, 20777);
+            _socket = new UdpClient(point);
+
+            _senderIP = new IPEndPoint(IPAddress.Any, 0);
             Output = "Bound to socket on " + IP + ":" + PORTNUM.ToString();
 
             storedRpms = new List<List<System.Windows.Point>>();
@@ -106,7 +106,7 @@ namespace F1Telemetry
 
             try
             {
-                EditConfigFile();
+                //EditConfigFile();
             }
             catch(Exception e)
             {
@@ -129,11 +129,11 @@ namespace F1Telemetry
         {
             try
             {
-                string gameConfigPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\My Games\\FormulaOne2014\\hardwaresettings\\hardware_settings_config.xml";
+                string gameConfigPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\My Games\\F1 2015\\hardwaresettings\\hardware_settings_config.xml";
                 string[] lines = System.IO.File.ReadAllLines(gameConfigPath);
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    if (lines[i].Contains("motion"))
+                    if (lines[i].Contains("motion") && !lines[i].Contains("motionBlur"))
                     {
                         lines[i] = ChangeValue(lines[i], "extradata", "3");
                         lines[i] = ChangeValue(lines[i], "ip", "127.0.0.1");
@@ -145,7 +145,7 @@ namespace F1Telemetry
             }
             catch (Exception e)
             {
-                Output += "\r\nCould not find config file. Please find hardware_settings_config.xml and ensure the line beginning with \"<motion\" looks like this:\r\n	<motion enabled=\"true\" ip=\"127.0.0.1\" port=\"20777\" delay=\"1\" extradata=\"3\" />";
+                //Output += "\r\nCould not find config file. Please find hardware_settings_config.xml and ensure the line beginning with \"<motion\" looks like this:\r\n	<motion enabled=\"true\" ip=\"127.0.0.1\" port=\"20777\" delay=\"1\" extradata=\"3\" />";
             }
         }
 
@@ -206,8 +206,11 @@ namespace F1Telemetry
                         shouldCreateCharts = false;
                         //throw new Exception("not enough laps to accurately gather data");
                     }
+                    else
+                    {
+                        _rm.TurnSections = Utils.FindTurnsBasedOnLap(completedLaps, accelerations, coordinates, completedLaps[0] + 1, out numberOfSections);
+                    }
 
-                    _rm.TurnSections = Utils.FindTurnsBasedOnLap(completedLaps, accelerations, coordinates, completedLaps[0] + 1, out numberOfSections);
                     //CollectionSections.Clear();
                     //CollectionSections.Add("All Sections");
                     //for (int i = 1; i <= numberOfSections; i++)
@@ -257,12 +260,8 @@ namespace F1Telemetry
             if (_rm != null)
             {
                 CreateUploadWindow();
-
-                if (shouldCreateCharts)
-                {
-                    DrawForces();
-                    DrawTrack();
-                }
+                DrawForces(shouldCreateCharts);
+                DrawTrack();
             }
         }
 
@@ -274,7 +273,7 @@ namespace F1Telemetry
             uploadview.Show();
         }
 
-        private void DrawForces()
+        private void DrawForces(bool shouldCreateCharts)
         {
             List<float> xAcc = null;
             List<float> yAcc = null;
@@ -296,7 +295,15 @@ namespace F1Telemetry
 
             for (int i = 0; i < _rm.LateralAcceleration.Count; i++)
             {
-                if ((_rm.CompletedLapsInRace[i] == selectedlap - 1 || selectedlap == -1) && (_rm.TurnSections[i] == selectedsection - 1 || selectedsection == -1))
+                if (shouldCreateCharts)
+                {
+                    if ((_rm.CompletedLapsInRace[i] == selectedlap - 1 || selectedlap == -1) && (_rm.TurnSections[i] == selectedsection - 1 || selectedsection == -1))
+                    {
+                        xAcc.Add(_rm.LateralAcceleration[i]);
+                        yAcc.Add(_rm.LongitudinalAcceleration[i]);
+                    }
+                }
+                else
                 {
                     xAcc.Add(_rm.LateralAcceleration[i]);
                     yAcc.Add(_rm.LongitudinalAcceleration[i]);
@@ -404,6 +411,7 @@ namespace F1Telemetry
             t.Start();
         }
 
+
         private ImageSource _throttleImage;
         public ImageSource ThrottleImage
         {
@@ -464,17 +472,17 @@ namespace F1Telemetry
                 int height = 100;
                 if (UploadLap != null)
                 {
-                    if (_previousLap != packet.Lap)
-                    {
-                        if (_previousLap == 0)
-                        {
-                            if (packet.Lap == 1)
-                                SubmitLapOnline(packet);
-                        }
-                        else
-                            SubmitLapOnline(packet);
-                        _previousLap = (int)packet.Lap;
-                    }
+                    //if (_previousLap != packet.Lap)
+                    //{
+                    //    if (_previousLap == 0)
+                    //    {
+                    //        if (packet.Lap == 1)
+                    //            SubmitLapOnline(packet);
+                    //    }
+                    //    else
+                    //        SubmitLapOnline(packet);
+                    //    _previousLap = (int)packet.Lap;
+                    //}
                 }
                 DrawThrottle(packet, height);
                 DrawBrake(packet, height);
@@ -483,22 +491,22 @@ namespace F1Telemetry
             });
         }
 
-        private void SubmitLapOnline(TelemetryPacket packet)
-        {
-            float totalLapTime = packet.PreviousLapTime;
-            float Sector1Time = _rm.TimeSector1[_rm.TimeSector1.Count - 2];
-            float Sector2Time = _rm.TimeSector2[_rm.TimeSector2.Count - 2];
-            float Sector3Time = totalLapTime - Sector1Time - Sector2Time;
-            int trackNum = (int)Enum.Parse(typeof(F1Telemetry.Upload.UploadView.TrackName), RaceModel.DistancesToNames[packet.TrackLength]);
-            UploadLap(totalLapTime, Sector1Time, Sector2Time, Sector3Time, trackNum);
-        }
+        //private void SubmitLapOnline(TelemetryPacket packet)
+        //{
+        //    float totalLapTime = packet.PreviousLapTime;
+        //    float Sector1Time = _rm.TimeSector1[_rm.TimeSector1.Count - 2];
+        //    float Sector2Time = _rm.TimeSector2[_rm.TimeSector2.Count - 2];
+        //    float Sector3Time = totalLapTime - Sector1Time - Sector2Time;
+        //    int trackNum = (int)Enum.Parse(typeof(F1Telemetry.Upload.UploadView.TrackName), RaceModel.DistancesToNames[packet.TrackLength]);
+        //    UploadLap(totalLapTime, Sector1Time, Sector2Time, Sector3Time, trackNum);
+        //}
 
         int RpmHeight = 150;
         int RpmWidth = 400;
         
         List<List<System.Windows.Point>> storedRpms;
         List<LineGeometry> _lines;
-        int NUM_GEARS = 8;
+        int NUM_GEARS = 9;
         int _counter = 0;
         private void DrawRpms(TelemetryPacket packet)
         {
@@ -711,6 +719,7 @@ namespace F1Telemetry
                     }
                     f.Write("\r\n");
                 }
+                fileCreated = true;
             }
             using (StreamWriter f = File.AppendText(_filepath))
             {

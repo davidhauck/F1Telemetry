@@ -14,138 +14,76 @@ namespace F1Telemetry
         public float Time;
         public float LapTime;
         public float LapDistance;
-        public float Distance;
-        
-        public float X;
-        
-        public float Y;
-        
-        public float Z;
+        public float TotalDistance;
+        public float X;      // World space position
+        public float Y;      // World space position
+        public float Z;      // World space position
         public float Speed;
-        
-        public float WorldSpeedX;
-        
-        public float WorldSpeedY;
-        
-        public float WorldSpeedZ;
-        
-        public float XR;
-        
-        public float Roll;
-        
-        public float ZR;
-        
-        public float XD;
-        
-        public float Pitch;
-        
-        public float ZD;
-        
-        public float SuspensionPositionRearLeft;
-        
-        public float SuspensionPositionRearRight;
-        
-        public float SuspensionPositionFrontLeft;
-        
-        public float SuspensionPositionFrontRight;
-        
-        public float SuspensionVelocityRearLeft;
-        
-        public float SuspensionVelocityRearRight;
-        
-        public float SuspensionVelocityFrontLeft;
-        
-        public float SuspensionVelocityFrontRight;
-        
-        public float WheelSpeedBackLeft;
-        
-        public float WheelSpeedBackRight;
-        
-        public float WheelSpeedFrontLeft;
-        
-        public float WheelSpeedFrontRight;
-        
+        public float X_Velocity;      // Velocity in world space
+        public float Y_Velocity;      // Velocity in world space
+        public float Z_Velocity;      // Velocity in world space
+        public float X_RightDirection;      // World space right direction
+        public float Y_RightDirection;      // World space right direction
+        public float Z_RightDirection;      // World space right direction
+        public float X_ForwardDirection;      // World space forward direction
+        public float Y_ForwardDirection;      // World space forward direction
+        public float Z_ForwardDirection;      // World space forward direction
+        public float m_susp_pos_bl;
+        public float m_susp_pos_br;
+        public float m_susp_pos_fl;
+        public float m_susp_pos_fr;
+        public float m_susp_vel_bl;
+        public float m_susp_vel_br;
+        public float m_susp_vel_fl;
+        public float m_susp_vel_fr;
+        public float m_wheel_speed_bl;
+        public float m_wheel_speed_br;
+        public float m_wheel_speed_fl;
+        public float m_wheel_speed_fr;
         public float Throttle;
-        
         public float Steer;
-        
         public float Brake;
-        
         public float Clutch;
-        
         public float Gear;
-        
-        public float LateralAcceleration;
-        
-        public float LongitudinalAcceleration;
+        public float m_gforce_lat;
+        public float m_gforce_lon;
         public float Lap;
-        
         public float EngineRevs;
+        public float m_sli_pro_native_support; // SLI Pro support
+        public float m_car_position;   // car race position
+        public float m_kers_level;    // kers energy left
+        public float m_kers_max_level;   // kers maximum energy
+        public float Drs;     // 0 = off, 1 = on
+        public float TractionControl;  // 0 (off) - 2 (high)
+        public float m_anti_lock_brakes;  // 0 (off) - 1 (on)
+        public float m_fuel_in_tank;   // current fuel mass
+        public float m_fuel_capacity;   // fuel capacity
+        public float m_in_pits;    // 0 = none, 1 = pitting, 2 = in pit area
+        public float Sector;     // 0 = sector1, 1 = sector2; 2 = sector3
+        public float TimeSector1;   // time of sector1 (or 0)
+        public float TimeSector2;   // time of sector2 (or 0)
+        public float m_brakes_temp0;   // brakes temperature (centigrade)
+        public float m_brakes_temp1;   // brakes temperature (centigrade)
+        public float m_brakes_temp2;   // brakes temperature (centigrade)
+        public float m_brakes_temp3;   // brakes temperature (centigrade)
+        public float m_wheels_pressure0;  // wheels pressure PSI
+        public float m_wheels_pressure1;  // wheels pressure PSI
+        public float m_wheels_pressure2;  // wheels pressure PSI
+        public float m_wheels_pressure3;  // wheels pressure PSI
+        public float m_team_info;    // team ID 
+        public float CompletedLapsInRace;    // total number of laps in this race
+        public float TrackLength;    // track size meters
+        public float PreviousLapTime;   // last lap time
+        public float m_max_rpm;    // cars max RPM, at which point the rev limiter will kick in
+        public float m_idle_rpm;    // cars idle RPM
+        public float m_max_gears;    // maximum number of gears
+        public float SessionType;   // 0 = unknown, 1 = practice, 2 = qualifying, 3 = race
+        public float m_drsAllowed;    // 0 = not allowed, 1 = allowed, -1 = invalid / unknown
+        public float m_track_number;   // -1 for unknown, 0-21 for tracks
+        public float m_vehicleFIAFlags;  // -1 = invalid/unknown, 0 = none, 1 = green, 2 = blue, 3 = yellow, 4 = red
 
-        /* New Fields in Patch 12 */
-        
-        public float NewField1;     // Always 1?
-        
-        public float RacePosition;     // Position in race
-        
-        public float KersRemaining;     // Kers Remaining
-        
-        public float KersRecharge;     // Always 400000? 
-        
-        public float DrsStatus;     // Drs Status
-        
-        public float Difficulty;     // 2 = Medium or Easy, 1 = Hard, 0 = Expert
-        
-        public float Assists;     // 0 = All assists are off.  1 = some assist is on.
-        
-        public float FuelRemaining;      // Not sure if laps or Litres?
-        
-        public float SessionType;   // 9.5 = race, 10 = time trail / time attack, 170 = quali, practice, championsmode
-        
-        public float NewField10;
-        
-        public float Sector;    // Sector (0, 1, 2)
-        
-        public float TimeSector1;    // Time Intermediate 1
-        
-        public float TimeSector2;    // Time Intermediate 2
-        
-        public float BrakeTemperatureRearLeft;
-        
-        public float BrakeTemperatureRearRight;
-        
-        public float BrakeTemperatureFrontLeft;
-        
-        public float BrakeTemperatureFrontRight;
-        
-        public float NewField18;    // Always 0?
-        
-        public float NewField19;    // Always 0?
-        
-        public float NewField20;    // Always 0?
-        
-        public float NewField21;    // Always 0?
-        
-        public float CompletedLapsInRace;    // Number of laps Completed (in GP only)
-        
-        public float TotalLapsInRace;    // Number of laps in GP (GP only)
-        
-        public float TrackLength;    // Track Length
-        
-        public float PreviousLapTime;    // Lap time of previous lap
 
-        //  The next three fields are new for F1 2013
 
-        
-        public float NewField26;    // Always 0?
-        
-        public float NewField27;    // Always 0?
-
-        public float NewField28;    // Always 0?
-
-        /* End new Fields */
-
-        
         public float SpeedInKmPerHour
         {
             get { return Speed * 3.60f; }
@@ -168,13 +106,13 @@ namespace F1Telemetry
         {
             get
             {
-                if (Math.Abs(this.SessionType - 9.5f) < 0.0001f)
+                if (SessionType == 3)
                     return "Race";
-                if (Math.Abs(this.SessionType - 10f) < 0.0001f)
-                    return "Time Trial";
-                if (Math.Abs(this.SessionType - 170f) < 0.0001f)
-                    return "Qualifying or Practice";
-                return "Other";
+                if (SessionType == 2)
+                    return "Qualifying";
+                if (SessionType == 1)
+                    return "Practice";
+                return "Unknown";
             }
         }
     }

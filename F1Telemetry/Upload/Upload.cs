@@ -132,7 +132,7 @@ namespace F1Telemetry.Upload
 
             Sector1Float = model.TimeSector1[bestLapIndex];
             Sector2Float = model.TimeSector2[bestLapIndex];
-            Track = RaceModel.DistancesToNames[model.TrackLength[0]];
+            //Track = RaceModel.DistancesToNames[model.TrackLength[0]];
 
             BestLap = bestLapTime.ToString();
             Sector1 = Sector1Float.ToString();

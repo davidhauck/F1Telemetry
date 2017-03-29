@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/F1Telemetry/obj
+/F1Telemetry/bin/Debug
+/.vs/F1Telemetry/v15/.suo
